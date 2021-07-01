@@ -1,0 +1,21 @@
+{
+  "name": "wetube",
+  "version": "1.0.0",
+  "description": "Wetube Clone built using NodeJS, Express, Mongo and ES6",
+  "scripts": {
+    "start": "node index.js "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimseongchan-kr/wetube-reloaded.git"
+  },
+  "author": "kimseongchan-kr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kimseongchan-kr/wetube-reloaded/issues"
+  },
+  "homepage": "https://github.com/kimseongchan-kr/wetube-reloaded#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
