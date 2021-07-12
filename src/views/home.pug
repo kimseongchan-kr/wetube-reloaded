@@ -1,9 +1,9 @@
 extends base.pug
+include mixins/video
 
 block content
     h1 Welcome Home Page!
-    ul
-        each video in videos 
-            li=video.title
-        else
-            li nothing
+    each video in videos 
+        +video(video) 
+    else
+        div nothing
