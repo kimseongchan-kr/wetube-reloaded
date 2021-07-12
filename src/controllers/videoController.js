@@ -1,7 +1,17 @@
 export const search = (req, res) =>
   res.render("search", { pageTitle: "Search" });
 export const trending = (req, res) => {
-  const videos = [];
+  const videos = [
+    {
+      title: "Hello ",
+    },
+    {
+      title: "Video #2",
+    },
+    {
+      title: "Video #3",
+    },
+  ];
   return res.render("home", { pageTitle: "Home", videos });
 };
 export const see = (req, res) => res.render("watch", { pageTitle: "Watch" });
