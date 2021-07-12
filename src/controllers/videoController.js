@@ -1,6 +1,9 @@
 export const search = (req, res) =>
   res.render("search", { pageTitle: "Search" });
-export const trending = (req, res) => res.render("home", { pageTitle: "Home" });
+export const trending = (req, res) => {
+  const videos = [];
+  return res.render("home", { pageTitle: "Home", videos });
+};
 export const see = (req, res) => res.render("watch", { pageTitle: "Watch" });
 export const edit = (req, res) => res.render("edit", { pageTitle: "Edit" });
 export const remove = (req, res) =>
