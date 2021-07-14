@@ -25,8 +25,29 @@ let videos = [
   },
 ];
 
+//globalRoute
 export const trending = (req, res) => {
   return res.render("home", { pageTitle: "Home", videos });
+};
+
+//videoRoute
+export const getUpload = (req, res) => {
+  return res.render("upload", { pageTitle: "Upload Video" });
+};
+
+export const postUpload = (req, res) => {
+  const { title } = req.body;
+  const id = videos.length + 1;
+  const newVideo = {
+    title,
+    rating: 0,
+    commentts: 0,
+    createdAt: "just now",
+    views: 0,
+    id,
+  };
+  videos.push(newVideo);
+  return res.redirect("/");
 };
 
 export const watch = (req, res) => {
