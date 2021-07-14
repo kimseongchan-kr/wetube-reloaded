@@ -25,23 +25,25 @@ let videos = [
   },
 ];
 
-export const search = (req, res) =>
-  res.render("search", { pageTitle: "Search" });
-
-export const trending = (req, res) =>
-  res.render("home", { pageTitle: "Home", videos });
+export const trending = (req, res) => {
+  return res.render("home", { pageTitle: "Home", videos });
+};
 
 export const watch = (req, res) => {
   const { id } = req.params;
   const video = videos[id - 1];
-
-  res.render("watch", { pageTitle: `Watching ${video.title}`, video });
+  return res.render("watch", { pageTitle: `Watching ${video.title}`, video });
 };
 
-export const edit = (req, res) => res.render("edit", { pageTitle: "Edit" });
+export const getEdit = (req, res) => {
+  const { id } = req.params;
+  const video = videos[id - 1];
+  return res.render("edit", { pageTitle: `Editing: ${video.title}`, video });
+};
 
-export const remove = (req, res) =>
-  res.render("delete", { pageTitle: "Delete" });
-
-export const upload = (req, res) =>
-  res.render("upload", { pageTitle: "Upload" });
+export const postEdit = (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+  videos[id - 1].title = title;
+  return res.redirect(`/videos/${id}`);
+};
