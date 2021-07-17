@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Wetube Clone built using NodeJS, Express, Mongo and ES6",
   "scripts": {
-    "dev": "nodemon -L --exec babel-node src/app.js"
+    "dev": "nodemon -L --exec babel-node src/init.js"
   },
   "repository": {
     "type": "git",
