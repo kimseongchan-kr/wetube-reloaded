@@ -4,8 +4,7 @@ include mixins/video
 block content
     a4 
         a(href="/videos/upload") Video Upload
-    h1 Welcome Home Page!
     each video in videos 
         +video(video) 
     else
-        div nothing
+        li nothing
