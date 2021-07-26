@@ -1,8 +1,21 @@
+import User from "../models/User";
+
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 
-export const postJoin = (req, res) => {
-  console.log(req.body);
-  res.end();
+export const postJoin = async (req, res) => {
+  const { name, username, email, password, location } = req.body;
+  try {
+    await User.create({
+      name,
+      username,
+      email,
+      password,
+      location,
+    });
+    return res.redirect("/login");
+  } catch (error) {
+    return res.render("404", { pageTitle: "User Not Found!" });
+  }
 };
 
 export const login = (req, res) => res.send("Login");
