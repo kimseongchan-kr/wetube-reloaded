@@ -3,7 +3,8 @@ import { home, search } from "../controllers/videoController";
 import {
   getJoin,
   postJoin,
-  login,
+  getLogin,
+  postLogin,
   logout,
 } from "../controllers/userController";
 
@@ -11,7 +12,7 @@ const rootRouter = express.Router();
 
 rootRouter.get("/", home);
 rootRouter.route("/join").get(getJoin).post(postJoin);
-rootRouter.get("/login", login);
+rootRouter.route("/login").get(getLogin).post(postLogin);
 rootRouter.get("/logout", logout);
 rootRouter.get("/search", search);
 
