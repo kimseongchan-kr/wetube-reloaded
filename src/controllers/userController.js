@@ -64,13 +64,9 @@ export const postLogin = async (req, res) => {
   return res.redirect("/");
 };
 
-export const logout = (req, res) => res.send("Logout");
-export const edit = (req, res) => res.send("Edit User");
-export const remove = (req, res) => res.send("Remove User");
-export const see = (req, res) => res.send("See User");
 export const startGithubLogin = (req, res) => {
   const config = {
-    client_id: "648c4dfce5d56a544ca1",
+    client_id: process.env.CLIENT_ID,
     allow_signup: false,
     scope: "read:user user:email",
   };
@@ -80,6 +76,30 @@ export const startGithubLogin = (req, res) => {
 
   return res.redirect(githubLoginUrl);
 };
+
 export const finishGithubLogin = (req, res) => {
+  const baseUrl = "https://github.com/login/oauth/access_token";
+  const config = {
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    code: req.query.code,
+  };
+
+  const loginData = fetch(baseUrl, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+    body: config,
+  }).then((response) => {
+    return response.json();
+  });
+
+  console.log(config, loginData);
   return res.send("test");
 };
+
+export const logout = (req, res) => res.send("Logout");
+export const edit = (req, res) => res.send("Edit User");
+export const remove = (req, res) => res.send("Remove User");
+export const see = (req, res) => res.send("See User");
