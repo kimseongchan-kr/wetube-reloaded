@@ -1,4 +1,5 @@
 import User from "../models/User";
+import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
@@ -79,24 +80,23 @@ export const startGithubLogin = (req, res) => {
 
 export const finishGithubLogin = (req, res) => {
   const baseUrl = "https://github.com/login/oauth/access_token";
+
   const config = {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     code: req.query.code,
   };
 
-  const loginData = fetch(baseUrl, {
+  fetch(baseUrl, {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Accept: "application/json",
     },
-    body: config,
-  }).then((response) => {
-    return response.json();
-  });
-
-  console.log(config, loginData);
-  return res.send("test");
+    body: JSON.stringify(config),
+  })
+    .then((response) => response.json())
+    .then((data) => res.send(JSON.stringify(data)));
 };
 
 export const logout = (req, res) => res.send("Logout");
