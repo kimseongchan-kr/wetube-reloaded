@@ -96,7 +96,25 @@ export const finishGithubLogin = (req, res) => {
     body: JSON.stringify(config),
   })
     .then((response) => response.json())
-    .then((data) => res.send(JSON.stringify(data)));
+    .then((data) => {
+      if (data.access_token) {
+        const { access_token } = data;
+        console.log(`token ${access_token}`);
+
+        fetch("https://api.github.com/user", {
+          header: {
+            Authorization: `token ${access_token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            return res.send(JSON.stringify(data));
+          });
+      } else {
+        console.log(data.access_token);
+        return res.redirect("/login");
+      }
+    });
 };
 
 export const logout = (req, res) => res.send("Logout");
