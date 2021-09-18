@@ -97,10 +97,7 @@ export const finishGithubLogin = (req, res) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("access_token :", data);
-
       if (data.access_token) {
-        console.log("success!!");
         const { access_token } = data;
 
         fetch("https://api.github.com/user", {
@@ -110,8 +107,22 @@ export const finishGithubLogin = (req, res) => {
           },
         })
           .then((response) => response.json())
-          .then((data) => {
-            return res.send(JSON.stringify(data));
+          .then((userData) => {
+            fetch("https://api.github.com/user/emails", {
+              method: "GET",
+              headers: {
+                Authorization: `token ${access_token}`,
+              },
+            })
+              .then((response) => response.json())
+              .then((emailDatas) => {
+                for (const emailData of emailDatas) {
+                  if (emailData.primary) {
+                    userData.email = emailData.email;
+                  }
+                }
+                return res.send(JSON.stringify(userData));
+              });
           });
       } else {
         return res.redirect("/login");
