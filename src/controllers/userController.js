@@ -121,7 +121,10 @@ export const finishGithubLogin = (req, res) => {
                     userData.email = emailData.email;
                   }
                 }
-                return res.send(JSON.stringify(userData));
+                return userData;
+              })
+              .then((userData) => {
+                console.log(userData);
               });
           });
       } else {
