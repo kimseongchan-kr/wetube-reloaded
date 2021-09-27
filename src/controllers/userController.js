@@ -80,6 +80,7 @@ export const startGithubLogin = (req, res) => {
 
 export const finishGithubLogin = (req, res) => {
   const baseUrl = "https://github.com/login/oauth/access_token";
+  const apiUrl = "https://api.github.com";
 
   const config = {
     client_id: process.env.CLIENT_ID,
@@ -100,7 +101,7 @@ export const finishGithubLogin = (req, res) => {
       if (data.access_token) {
         const { access_token } = data;
 
-        fetch("https://api.github.com/user", {
+        fetch(`${apiUrl}/user`, {
           method: "GET",
           headers: {
             Authorization: `token ${access_token}`,
@@ -108,7 +109,7 @@ export const finishGithubLogin = (req, res) => {
         })
           .then((response) => response.json())
           .then((userData) => {
-            fetch("https://api.github.com/user/emails", {
+            fetch(`${apiUrl}/user/emails`, {
               method: "GET",
               headers: {
                 Authorization: `token ${access_token}`,
@@ -117,7 +118,7 @@ export const finishGithubLogin = (req, res) => {
               .then((response) => response.json())
               .then((emailDatas) => {
                 for (const emailData of emailDatas) {
-                  if (emailData.primary) {
+                  if (emailData.primary && emailData.verified) {
                     userData.email = emailData.email;
                   }
                 }
