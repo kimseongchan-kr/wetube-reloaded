@@ -122,10 +122,39 @@ export const finishGithubLogin = (req, res) => {
                     userData.email = emailData.email;
                   }
                 }
-                return userData;
-              })
-              .then((userData) => {
-                console.log(userData);
+
+                if (!userData.email) {
+                  return res.redirect("/login");
+                }
+
+                User.findOne(
+                  {
+                    email: userData.email,
+                  },
+                  function (err, existringUser) {
+                    if (existringUser) {
+                      req.session.loggedIn = true;
+                      req.session.user = existringUser;
+                      return res.redirect("/");
+                    } else {
+                      User.create(
+                        {
+                          socialOnly: true,
+                          name: userData.name,
+                          username: userData.login,
+                          email: userData.email,
+                          password: "",
+                          location: userData.location,
+                        },
+                        function (user) {
+                          req.session.loggedIn = true;
+                          req.session.user = user;
+                          return res.redirect("/");
+                        }
+                      );
+                    }
+                  }
+                );
               });
           });
       } else {
