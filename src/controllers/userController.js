@@ -78,7 +78,7 @@ export const startGithubLogin = (req, res) => {
   return res.redirect(githubLoginUrl);
 };
 
-export const finishGithubLogin = (req, res) => {
+export const finishGithubLogin = async (req, res) => {
   const baseUrl = "https://github.com/login/oauth/access_token";
   const apiUrl = "https://api.github.com";
 
@@ -88,79 +88,78 @@ export const finishGithubLogin = (req, res) => {
     code: req.query.code,
   };
 
-  fetch(baseUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(config),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.access_token) {
-        const { access_token } = data;
+  //AccessToken을 가져오는 부분
+  const accessTokenObj = await (
+    await fetch(baseUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(config),
+    })
+  ).json();
 
-        fetch(`${apiUrl}/user`, {
+  const { access_token } = accessTokenObj;
+
+  //AccessToken이 있다면 유저의 정보를 가져온다.
+  if (access_token) {
+    const userData = await (
+      await fetch(`${apiUrl}/user`, {
+        method: "GET",
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+
+    if (!userData.email) {
+      const emailDatas = await (
+        await fetch(`${apiUrl}/user/emails`, {
           method: "GET",
           headers: {
             Authorization: `token ${access_token}`,
           },
         })
-          .then((response) => response.json())
-          .then((userData) => {
-            fetch(`${apiUrl}/user/emails`, {
-              method: "GET",
-              headers: {
-                Authorization: `token ${access_token}`,
-              },
-            })
-              .then((response) => response.json())
-              .then((emailDatas) => {
-                for (const emailData of emailDatas) {
-                  if (emailData.primary && emailData.verified) {
-                    userData.email = emailData.email;
-                  }
-                }
+      ).json();
 
-                if (!userData.email) {
-                  return res.redirect("/login");
-                }
+      for (const emailData of emailDatas) {
+        if (emailData.primary === true && emailData.verified === true) {
+          userData.email = emailData.email;
+        }
+      }
 
-                User.findOne(
-                  {
-                    email: userData.email,
-                  },
-                  function (err, existringUser) {
-                    if (existringUser) {
-                      req.session.loggedIn = true;
-                      req.session.user = existringUser;
-                      return res.redirect("/");
-                    } else {
-                      User.create(
-                        {
-                          socialOnly: true,
-                          name: userData.name,
-                          username: userData.login,
-                          email: userData.email,
-                          password: "",
-                          location: userData.location,
-                        },
-                        function (user) {
-                          req.session.loggedIn = true;
-                          req.session.user = user;
-                          return res.redirect("/");
-                        }
-                      );
-                    }
-                  }
-                );
-              });
-          });
-      } else {
+      if (!userData.email) {
+        //이메일이 없을 경우 로그인 창으로 돌려보냄
         return res.redirect("/login");
       }
+    }
+
+    const existringUser = await User.findOne({
+      email: userData.email,
     });
+
+    if (existringUser) {
+      req.session.loggedIn = true;
+      req.session.user = existringUser;
+      return res.redirect("/");
+    } else {
+      const user = await User.create({
+        socialOnly: true,
+        name: userData.name ? userData.name : "Unknown",
+        username: userData.login,
+        email: userData.email,
+        password: "",
+        location: userData.location,
+      });
+
+      req.session.loggedIn = true;
+      req.session.user = user;
+      return res.redirect("/");
+    }
+  } else {
+    return res.redirect("/login");
+  }
 };
 
 export const logout = (req, res) => res.send("Logout");
