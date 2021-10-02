@@ -16,7 +16,7 @@ html(lang="ko")
                         li
                             a(href="/logout") LOGOUT
                         li
-                            h1=loggedInUser.username
+                            a(href="/users/edit")=loggedInUser.username
                     else
                         li
                             a(href="/join") JOIN
