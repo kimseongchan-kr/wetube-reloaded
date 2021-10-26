@@ -1,4 +1,5 @@
 import express from "express";
+import { protectorMiddleware, publicOnlyMiddleware } from "../middleware";
 import {
   getEdit,
   postEdit,
@@ -10,10 +11,10 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.route("/edit").get(getEdit).post(postEdit);
-userRouter.get("/delete", remove);
-userRouter.get("/github/start", startGithubLogin);
-userRouter.get("/github/finish", finishGithubLogin);
+userRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
+userRouter.get("/github/start", publicOnlyMiddleware, startGithubLogin);
+userRouter.get("/github/finish", publicOnlyMiddleware, finishGithubLogin);
 userRouter.get("/:id", see);
+userRouter.get("/delete", remove);
 
 export default userRouter;
