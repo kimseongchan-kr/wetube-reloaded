@@ -2,8 +2,9 @@ extends base.pug
 include mixins/video
 
 block content
-    a4 
-        a(href="/videos/upload") Video Upload
+    if loggedIn
+        a4 
+            a(href="/videos/upload") Video Upload
     each video in videos 
         +video(video) 
     else

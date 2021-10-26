@@ -1,10 +1,10 @@
 extends base
 
 block content
-    from(method="POST")
+    form(method="POST")
         input(name="avatarUrl", type="file", value="")
         input(name="name", type="text", placeholder="name", value=loggedInUser.name, required)
         input(name="email", type="email", placeholder="email", value=loggedInUser.email, required)
         input(name="username", type="text", placeholder="username", value=loggedInUser.username, required)
         input(name="location", type="text", placeholder="location", value=loggedInUser.location, required)
-        input(type="submit", value="Update Profile")
+        input(type="submit", value="UPDATE PROFILE")
