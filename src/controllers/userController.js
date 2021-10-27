@@ -172,6 +172,18 @@ export const postEdit = async (req, res) => {
     },
     body: { avatarUrl, name, email, username, location },
   } = req;
+
+  if (!profileUpdateCheck(req)) {
+    const exists = await User.exists({ $or: [{ username }, { email }] });
+
+    if (exists) {
+      return res.status(400).render("profile", {
+        pageTitle: "Profile",
+        errorMessage: "This username/email is already taken.",
+      });
+    }
+  }
+
   const user = await User.findByIdAndUpdate(
     _id,
     {
@@ -186,6 +198,20 @@ export const postEdit = async (req, res) => {
 
   req.session.user = user;
   return res.redirect("edit");
+};
+
+const profileUpdateCheck = (req) => {
+  const sessionObj = {
+    email: req.session.user.email,
+    username: req.session.user.username,
+  };
+
+  const bodyObj = {
+    email: req.body.email,
+    username: req.body.username,
+  };
+
+  return JSON.stringify(sessionObj) === JSON.stringify(bodyObj);
 };
 
 export const remove = (req, res) => res.send("Remove User");

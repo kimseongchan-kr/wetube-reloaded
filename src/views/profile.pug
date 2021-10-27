@@ -1,6 +1,7 @@
 extends base
 
 block content
+    p=errorMessage
     form(method="POST")
         input(name="avatarUrl", type="file", value="")
         input(name="name", type="text", placeholder="name", value=loggedInUser.name, required)
