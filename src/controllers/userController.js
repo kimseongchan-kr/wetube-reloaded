@@ -1,6 +1,7 @@
 import User from "../models/User";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
+import { render } from "pug";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 
@@ -201,5 +202,39 @@ export const postEdit = async (req, res) => {
   return res.redirect("edit");
 };
 
+export const getChangePassword = (req, res) =>
+  res.render("change_password", { pageTitle: "Change Password" });
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: { old, new1, new2 },
+    session: {
+      user: { _id, password },
+    },
+  } = req;
+
+  if (new1 !== new2) {
+    return res.status(400).render("change_password", {
+      pageTitle: "Change Password",
+      errorMessage: "Password confirmation does not match.",
+    });
+  }
+
+  const passwordCheck = await bcrypt.compare(old, password);
+  if (!passwordCheck) {
+    return res.status(400).render("change_password", {
+      pageTitle: "Change Password",
+      errorMessage: "The password is incorrect.",
+    });
+  }
+
+  const user = await User.findById(_id);
+  user.password = new1;
+  await user.save();
+
+  res.redirect("/logout");
+};
+
 export const remove = (req, res) => res.send("Remove User");
+
 export const see = (req, res) => res.send("See User");
