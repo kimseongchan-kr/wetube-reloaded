@@ -22,23 +22,3 @@ export const publicOnlyMiddleware = (req, res, next) => {
 };
 
 export const uploadFiles = multer({ dest: "uploads/" });
-
-const objTest = (dest) => {
-  const b = {
-    create: function () {
-      const test = (req, res, next) => {
-        console.log("hahaha");
-        next();
-      };
-
-      return test;
-    },
-    distory: function (req, res, next) {
-      console.log("test!!");
-    },
-  };
-
-  return b;
-};
-
-export const loadFiles = objTest({ dest: "uploads/" });
