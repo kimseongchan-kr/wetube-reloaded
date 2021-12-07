@@ -3,6 +3,7 @@ import {
   protectorMiddleware,
   publicOnlyMiddleware,
   uploadFiles,
+  loadFiles,
 } from "../middleware";
 import {
   getEdit,
@@ -21,7 +22,7 @@ userRouter
   .route("/edit")
   .all(protectorMiddleware)
   .get(getEdit)
-  .post(uploadFiles.single("avatarUrl"), postEdit);
+  .post(loadFiles.create(), uploadFiles.single("avatarUrl"), postEdit);
 userRouter
   .route("/change-password")
   .all(protectorMiddleware)
